@@ -31,7 +31,7 @@ public abstract class LifecycleLoggingActivity extends Activity {
 		
         if(savedInstanceState != null) {
             // The activity is being re-created. Use the
-            // savedInstanceState bundle for initializations either
+            // savedInstanceState bundle for initializations eithergit@github.com:codingvirtual/POSA-15.git
             // during onCreate or onRestoreInstanceState().
             Log.d(TAG,
                   "onCreate(): activity re-created from savedInstanceState");
@@ -56,7 +56,9 @@ public abstract class LifecycleLoggingActivity extends Activity {
     protected void onStart(){
         // Always call super class for necessary
         // initialization/implementation.
-        // TODO - you fill in here.
+        // DONE - you fill in here.
+        super.onStart();
+        Log.i(TAG, "Entered onStart");
     }
 	
     /**
@@ -73,7 +75,9 @@ public abstract class LifecycleLoggingActivity extends Activity {
         // Always call super class for necessary
         // initialization/implementation and then log which lifecycle
         // hook method is being called.
-        // TODO - you fill in here.
+        // DONE - you fill in here.
+        super.onResume();
+        Log.i(TAG, "Entered onResume");
     }
 	
     /**
@@ -89,7 +93,9 @@ public abstract class LifecycleLoggingActivity extends Activity {
         // Always call super class for necessary
         // initialization/implementation and then log which lifecycle
         // hook method is being called.
-        // TODO - you fill in here.
+        // DONE - you fill in here.
+        super.onPause();
+        Log.i(TAG, "Entered onPause");
     }
 	
     /**
@@ -102,7 +108,9 @@ public abstract class LifecycleLoggingActivity extends Activity {
         // Always call super class for necessary
         // initialization/implementation and then log which lifecycle
         // hook method is being called.
-        // TODO - you fill in here.
+        // DONE - you fill in here.
+        super.onStop();
+        Log.i(TAG, "Entered onStop");
     }
 	
     /**
@@ -114,7 +122,9 @@ public abstract class LifecycleLoggingActivity extends Activity {
         // Always call super class for necessary
         // initialization/implementation and then log which lifecycle
         // hook method is being called.
-        // TODO - you fill in here.
+        // DONE - you fill in here.
+        super.onRestart();
+        Log.i(TAG, "Entered onRestart");
     }
 	
     /**
@@ -127,6 +137,8 @@ public abstract class LifecycleLoggingActivity extends Activity {
         // Always call super class for necessary
         // initialization/implementation and then log which lifecycle
         // hook method is being called.
-        // TODO - you fill in here.
+        // DONE - you fill in here.
+        super.onDestroy();
+        Log.i(TAG, "Entered onDestroy");
     }
 }
