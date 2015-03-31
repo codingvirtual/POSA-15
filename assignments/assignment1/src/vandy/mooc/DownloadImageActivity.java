@@ -50,9 +50,9 @@ public class DownloadImageActivity extends Activity {
         // runnable posts a result to the handler
         // handler takes the result via handleMessage and creates the Intent and returns it
 
-        final Handler downloadHandler =  //new DownloadHandler(new WeakReference<DownloadImageActivity>(this));
+        final Handler downloadHandler = new DownloadHandler(this);
 
-
+/*
                 new Handler () {
             @Override
             public void handleMessage(final Message msg) {
@@ -69,6 +69,7 @@ public class DownloadImageActivity extends Activity {
                 });
             }
         };
+        */
 
 
         downloadHandler.post(new Runnable() {
