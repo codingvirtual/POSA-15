@@ -1,7 +1,6 @@
 package vandy.mooc;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.*;
@@ -40,7 +39,7 @@ public class DownloadImageActivity extends Activity {
         // contains the path to the image file, and set this as the
         // result of the Activity.
 
-        // @@ TODO -- you fill in here using the Android "HaMeR"
+        // @@ DONE -- you fill in here using the Android "HaMeR"
         // concurrency framework.  Note that the finish() method
         // should be called in the UI thread, whereas the other
         // methods should be called in the background thread.
@@ -96,6 +95,7 @@ public class DownloadImageActivity extends Activity {
 
 
     private static class DownloadHandler extends Handler {
+
         final private WeakReference<DownloadImageActivity> mOuterClass;
 
         public DownloadHandler(DownloadImageActivity outerActivity) {
@@ -112,8 +112,13 @@ public class DownloadImageActivity extends Activity {
                 public void run() {
                     Intent resultIntent = new Intent();
                     Uri returnUrl = Uri.parse(theMsg.getData().getString("result"));
-                    resultIntent.setData(returnUrl);
-                    mOuterClass.get().setResult(RESULT_OK, resultIntent);
+                    if (returnUrl != null) {
+                        resultIntent.setData(returnUrl);
+                        mOuterClass.get().setResult(RESULT_OK, resultIntent);
+                    }
+                    else {
+                        mOuterClass.get().setResult(RESULT_CANCELED, resultIntent);
+                    }
                     mOuterClass.get().finish();
                 }
             });
