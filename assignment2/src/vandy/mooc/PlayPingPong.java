@@ -1,11 +1,14 @@
 package vandy.mooc;
 
+import java.lang.reflect.Array;
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 /**
  * @class PlayPingPong
@@ -15,6 +18,8 @@ import android.os.Message;
  *        respectively, on the display.
  */
 public class PlayPingPong implements Runnable {
+
+    static String TAG = "PlayPingPong";
     /**
      * Keep track of whether a Thread is printing "ping" or "pong".
      */
@@ -27,6 +32,11 @@ public class PlayPingPong implements Runnable {
      */
     private final int mMaxIterations;
 
+    private final PingPongThread[] mThreads = {
+            new PingPongThread(PingPong.PING),
+            new PingPongThread(PingPong.PONG)
+    };
+
     /**
      * The strategy for outputting strings to the display.
      */
@@ -37,6 +47,8 @@ public class PlayPingPong implements Runnable {
      * HandlerThreads.
      */
     // @@ TODO - you fill in here.
+    private Handler[] handlers = new Handler[2];
+
 
     /**
      * Define a CyclicBarrier synchronizer that ensures the
@@ -44,6 +56,7 @@ public class PlayPingPong implements Runnable {
      * algorithm begins.
      */
     // @@ TODO - you fill in here.
+    private final CyclicBarrier mBarrier = new CyclicBarrier(2);
 
     /**
      * Implements the concurrent ping/pong algorithm using a pair of
@@ -74,6 +87,7 @@ public class PlayPingPong implements Runnable {
         public PingPongThread(PingPong myType) {
         	super(myType.toString());
             // @@ TODO - you fill in here.
+            mMyType = myType;
         }
 
         /**
@@ -86,19 +100,38 @@ public class PlayPingPong implements Runnable {
             // Create the Handler that will service this type of
             // Handler, i.e., either PING or PONG.
             // @@ TODO - you fill in here.
+            switch (mMyType) {
+                case PING:
+                    handlers[0] = new Handler(this);
+                    break;
+                case PONG:   // must be PONG
+                    handlers[1] = new Handler(this);
+                    break;
+                default:
+                    throw new RuntimeException("Neither PING nor PONG found in onLooperPrepared");
+            }
+
+            Log.i(TAG, "created " + mMyType.name() + " handler");
 
             try {
                 // Wait for both Threads to initialize their Handlers.
                 // @@ TODO - you fill in here.
+                mBarrier.await();
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
 
             // Start the PING_THREAD first by (1) creating a Message
             // where the PING Handler is the "target" and the PONG
             // Handler is the "obj" to use for the reply and (2)
             // sending the Message to the PING_THREAD's Handler.
             // @@ TODO - you fill in here.
+            if (mMyType == PingPong.PING) {
+                Message msg = handlers[0].obtainMessage(0, handlers[1]);
+                msg.sendToTarget();
+            }
         }
 
         /**
@@ -111,23 +144,35 @@ public class PlayPingPong implements Runnable {
             // with all its iterations yet.
             // @@ TODO - you fill in here, replacing "true" with the
             // appropriate code.
-            if (true) {
+            Log.i(TAG, "Iterations completed: " + mIterationsCompleted);
+            if (mIterationsCompleted < mMaxIterations) {
+                mOutputStrategy.print(getName() + "(" + ++mIterationsCompleted + ")");
             } else {
                 // Shutdown the HandlerThread to the main PingPong
                 // thread can join with it.
                 // @@ TODO - you fill in here.
+                Log.i("PlayPingPong", "Ending " + mMyType.name() + " thread");
+                Looper.myLooper().quit();
             }
 
             // Create a Message that contains the Handler as the
             // reqMsg "target" and our Handler as the "obj" to use for
             // the reply.
             // @@ TODO - you fill in here.
+            Handler msgObj = (Handler) reqMsg.obj;
 
-            // Return control to the Handler in the other
-            // HandlerThread, which is the "target" of the msg
-            // parameter.
-            // @@ TODO - you fill in here.
+            if (!msgObj.getLooper().getThread().isAlive()) {
+                Looper.myLooper().quit();
+            } else {
 
+                Message msg = msgObj.obtainMessage(0, handlers[mMyType.ordinal()]);
+
+                // Return control to the Handler in the other
+                // HandlerThread, which is the "target" of the msg
+                // parameter.
+                // @@ TODO - you fill in here.
+                msg.sendToTarget();
+            }
             return true;
         }
     }
@@ -151,17 +196,26 @@ public class PlayPingPong implements Runnable {
     public void run() {
         // Let the user know we're starting. 
         mOutputStrategy.print("Ready...Set...Go!");
-       
-        // Create the ping and pong threads.
-        // @@ TODO - you fill in here.
 
         // Start ping and pong threads, which cause their Looper to
         // loop.
         // @@ TODO - you fill in here.
 
+        mThreads[0].start();
+        mThreads[1].start();
+
         // Barrier synchronization to wait for all work to be done
         // before exiting play().
         // @@ TODO - you fill in here.
+
+        for (PingPongThread thread : mThreads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                mOutputStrategy.errorLog("PlayPingPong.java",
+                        "Thread.join interrupted");
+            }
+        }
 
         // Let the user know we're done.
         mOutputStrategy.print("Done!");
