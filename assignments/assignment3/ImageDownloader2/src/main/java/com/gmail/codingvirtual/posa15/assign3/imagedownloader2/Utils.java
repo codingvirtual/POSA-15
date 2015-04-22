@@ -1,3 +1,5 @@
+package com.gmail.codingvirtual.posa15.assign3.imagedownloader2;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,7 +29,7 @@ public class Utils {
     /**
      * Used for debugging.
      */
-    private final static String TAG = "Utils";
+    private final static String TAG = "com.gmail.codingvirtual.posa15.assign3.imagedownloader2.Utils";
     
     /**
      * Apply a grayscale filter to the @a imageEntity and return it.

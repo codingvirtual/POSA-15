@@ -1,4 +1,4 @@
-package com.gmail.codingvirtual.posa15.assign3;
+package com.gmail.codingvirtual.posa15.assign3.imagedownloader2;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
