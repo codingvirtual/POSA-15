@@ -3,13 +3,14 @@ package com.gmail.codingvirtual.posa15.assign3.imagedownloader2;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
-/**
- * An Activity that downloads an image, stores it in a local file on
- * the local device, and returns a Uri to the image file.
- */
-public class DownloadImageActivity extends LifecycleLoggingActivity {
+
+public class FilterImageActivity extends LifecycleLoggingActivity {
+
     /**
      * Debugging tag used by the Android logger.
      */
@@ -46,16 +47,16 @@ public class DownloadImageActivity extends LifecycleLoggingActivity {
         // post a runnable to the handler that does the downloading
         // runnable posts a result to the handler
         // handler takes the result via handleMessage and creates the Intent and returns it
-        new DownloadTask().execute(url);
+        new FilterTask().execute(url);
 
     }
 
 
-    private class DownloadTask extends AsyncTask<Uri, Void, Uri> {
+    private class FilterTask extends AsyncTask<Uri, Void, Uri> {
 
         @Override
         protected Uri doInBackground(Uri... url) {
-            return Utils.downloadImage(getApplicationContext(), url[0]);
+            return Utils.grayScaleFilter(getApplicationContext(), url[0]);
         }
 
         protected void onPostExecute(Uri returnUrl) {
@@ -65,4 +66,6 @@ public class DownloadImageActivity extends LifecycleLoggingActivity {
             finish();
         }
     }
+
+
 }

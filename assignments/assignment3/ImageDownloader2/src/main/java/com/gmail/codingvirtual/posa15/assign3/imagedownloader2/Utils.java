@@ -105,7 +105,7 @@ public class Utils {
     	try {
             if (!isExternalStorageWritable()) {
                 Log.d(TAG,
-                      "external storage is not writable");
+                      "external storage not writable");
                 return null;
             }
 

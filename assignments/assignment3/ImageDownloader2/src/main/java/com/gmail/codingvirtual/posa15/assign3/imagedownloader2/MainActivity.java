@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.URLUtil;
@@ -18,6 +19,7 @@ import android.widget.Toast;
  * view it.
  */
 public class MainActivity extends LifecycleLoggingActivity {
+    private static final int DOWNLOAD_FILTER_REQUEST = 2;
     /**
      * Debugging tag used by the Android logger.
      */
@@ -115,7 +117,14 @@ public class MainActivity extends LifecycleLoggingActivity {
             // Check if the request code is what we're expecting.
             // @@ DONE -- you fill in here, replacing true with the
             // right code.
+            Log.i(TAG, "inside onActivityResult");
             if (requestCode == DOWNLOAD_IMAGE_REQUEST) {
+
+                Intent filterImageIntent =  makeFilterImageIntent(data.getData());
+                startActivityForResult(filterImageIntent, DOWNLOAD_FILTER_REQUEST);
+
+            }
+            if (requestCode == DOWNLOAD_FILTER_REQUEST) {
                 // Call the makeGalleryIntent() factory method to
                 // create an Intent that will launch the "Gallery" app
                 // by passing in the path to the downloaded image
@@ -143,12 +152,13 @@ public class MainActivity extends LifecycleLoggingActivity {
      * Factory method that returns an Intent for viewing the
      * downloaded image in the Gallery app.
      */
-    private Intent makeGalleryIntent(String pathToImageFile) {
+    private Intent makeGalleryIntent(String path) {
         // Create an intent that will start the Gallery app to view
         // the image.
     	// MAYBE -- you fill in here, replacing "null" with the proper
     	// code.
-        Intent galleryIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(pathToImageFile));
+        Intent galleryIntent = new Intent(Intent.ACTION_VIEW);
+        galleryIntent.setDataAndType(Uri.parse("file://" + path), "image/*");
         return galleryIntent;
     }
 
@@ -159,11 +169,20 @@ public class MainActivity extends LifecycleLoggingActivity {
         // Create an intent that will download the image from the web.
     	// MAYBE -- you fill in here, replacing "null" with the proper
     	// code.
-        Intent downloadImageIntent = new Intent(Intent.ACTION_VIEW);
+        Intent downloadImageIntent = new Intent("com.gmail.codingvirtual.posa15.assign3.imagedownloader2.action.DOWNLOAD_IMAGE");
         downloadImageIntent.setData(url);
         return downloadImageIntent;
     }
 
+    /**
+     * Factory method that returns an Intent for filtering an image.
+     */
+    private Intent makeFilterImageIntent(Uri url) {
+        // Create an intent that will filter the image previously downloaded.
+        Intent filterImageIntent = new Intent("com.gmail.codingvirtual.posa15.assign3.imagedownloader2.action.FILTER_IMAGE");
+        filterImageIntent.setDataAndType(url, "image/*");
+        return filterImageIntent;
+    }
     /**
      * Get the URL to download based on user input.
      */
